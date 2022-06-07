@@ -1,0 +1,11 @@
+{#
+Available variables:
+* entity
+* indexer_item - indexer item Oro\Bundle\SearchBundle\Query\Result\Item
+#}
+{% extends '@OroSearch/Search/searchResultItem.html.twig' %}
+
+{% set recordUrl = indexer_item.recordUrl %}
+{% set showImage = false  %}
+{% set title = indexer_item.recordTitle ?: 'N/A'|trans %}
+{% set entityType = 'oro.contact.entity_label'|trans %}

@@ -1,0 +1,6 @@
+oro:
+  user:
+    user_naming_type:
+      show_user_grid: Show users grid
+      label: User naming type
+      plural_label: User naming types

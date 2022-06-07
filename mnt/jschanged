@@ -1,0 +1,15 @@
+#!/bin/bash
+
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+start=`date +%s`
+
+echo -e "Start rebuild process"
+docker-compose exec --user www-data app /var/www/bin/console oro:assets:install --symlink $@
+docker-compose exec --user www-data app /var/www/bin/console assetic:dump $@
+docker-compose exec --user www-data app /var/www/bin/console oro:requirejs:build $@
+docker-compose exec --user www-data app /var/www/bin/console cache:clear $@
+end=`date +%s`
+runtime=$((end-start))
+echo -e "${GREEN}Done. Time: $runtime seconds."

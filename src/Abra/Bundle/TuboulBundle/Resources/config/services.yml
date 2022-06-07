@@ -1,0 +1,9 @@
+#services:
+#  Training\Bundle\DemoBundle\Controller\UserNamingTypeController:
+#    public: true
+#    calls:
+#      - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+#    tags:
+#      - { name: container.service_subscriber }
+#    arguments:
+#      [ '@oro_form.update_handler', '@translator', '@doctrine.orm.entity_manager' ]

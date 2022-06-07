@@ -1,0 +1,3 @@
+#user_naming_controller:
+#  resource:     "@TrainingDemoBundle/Controller"
+#  type:         annotation

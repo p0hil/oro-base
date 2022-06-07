@@ -1,0 +1,18 @@
+#!/bin/bash
+
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+DIST=/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.dist
+SRC=/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+DIR=/usr/local/etc/php/conf.d
+
+EXISTS=$(docker-compose exec app bash -c "ls $DIR | grep docker-php-ext-xdebug.ini.dist")
+if [ ! $EXISTS ]
+then
+  echo -e "${GREEN}xdebug already turned on"
+else
+  docker-compose exec app bash -c "mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.dist /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
+  docker-compose exec app bash -c "kill -USR2 1"
+  echo -e "${GREEN}Done. Now xdebug turned on"
+fi

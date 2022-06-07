@@ -1,0 +1,79 @@
+version: '3.7'
+services:
+  mysql:
+    image: mysql:8.0
+    ports: ['3313:3306']
+    labels:
+      com.symfony.server.service-prefix: ORO_DB
+    volumes:
+      - mysql-oro-mutagen:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: oro_db_pass
+      MYSQL_DATABASE: oro_db
+      MYSQL_USER: oro_db_user
+      MYSQL_PASSWORD: oro_db_pass
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    healthcheck:
+      test: "mysqladmin ping --silent -u$${MYSQL_USER} -p$${MYSQL_PASSWORD}"
+    restart: on-failure
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports: ['1025', '1080']
+    labels:
+      com.symfony.server.service-prefix: ORO_MAILER
+  app:
+    build:
+      context: ./
+      dockerfile: ./docker/build/Dockerfile
+    environment:
+      - APP_DEBUG=true
+    depends_on:
+      - mysql
+    ports:
+      - "8080"
+      - "9000"
+    volumes:
+      - code-oro-mutagen:/var/www
+      - ./docker/config/php.ini:/usr/local/etc/php/conf.d/php.ini
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+    volumes:
+      - code-oro-mutagen:/var/www
+      - ./docker/config/nginx-ssl.conf:/etc/nginx/conf.d/app.conf
+      - ./docker/config/ssl/oro-docker-mutagen.loc-key.pem:/etc/ssl/private/oro-docker-mutagen.loc-key.pem
+      - ./docker/config/ssl/oro-docker-mutagen.loc.pem:/etc/ssl/private/oro-docker-mutagen.loc.pem
+    depends_on:
+      - app
+volumes:
+  mysql-oro-mutagen:
+  code-oro-mutagen:
+
+x-mutagen:
+  sync:
+    defaults:
+      ignore:
+        vcs: true
+        paths:
+          - 'vendor'
+          - 'docker'
+          - 'node_modules'
+          - 'var'
+          - '.idea'
+    code:
+      alpha: '.'
+      beta: 'volume://code-oro-mutagen'
+      permissions:
+        defaultDirectoryMode: '755'
+        defaultFileMode: '644'
+      configurationBeta:
+        permissions:
+          defaultOwner: 'id:33'
+          defaultGroup: 'id:33'

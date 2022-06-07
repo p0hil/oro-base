@@ -1,0 +1,20 @@
+#!/bin/bash
+
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+start=`date +%s`
+#echo -e "Remove entire cache dir"
+#docker-compose exec app rm -rf /var/www/var/cache
+#echo -e "${GREEN}Done.${NC}"
+
+echo -e "Start clearing cache"
+docker-compose exec --user www-data app /var/www/bin/console cache:clear $@
+
+#echo -e "${GREEN}Done.${NC}"
+#echo -e "Start warming cache"
+#docker-compose exec --user www-data app /var/www/bin/console cache:warm $@
+
+end=`date +%s`
+runtime=$((end-start))
+echo -e "${GREEN}Done. Cache cleared. Time: $runtime seconds."

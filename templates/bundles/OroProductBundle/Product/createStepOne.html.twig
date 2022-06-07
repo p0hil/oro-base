@@ -1,0 +1,14 @@
+{% extends '@!OroProduct/Product/createStepOne.html.twig' %}
+
+{% block navButtons %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {{ UI.cancelButton(path('oro_product_index')) }}
+    {% set html = UI.buttonType({
+        'type': 'submit',
+        'class': 'btn-success main-group',
+        'label': 'Uuuhhaaa11111908098098'|trans,
+        'action': 'oro_product_create'
+    }) %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}

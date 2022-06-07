@@ -1,0 +1,5 @@
+acls:
+  can_do_something:
+    type: action
+    label: oro.user.can_do_something
+    group_name: ""

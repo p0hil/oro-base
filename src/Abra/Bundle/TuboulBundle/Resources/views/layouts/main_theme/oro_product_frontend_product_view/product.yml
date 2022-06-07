@@ -1,0 +1,13 @@
+layout:
+    actions:
+#        - '@move':
+#              id: product_view_primary_container
+#              parentId: page_title_container
+#        - '@remove':
+#              id: product_view_primary_wrapper
+        - '@setOption':
+              id: product_view_attribute_group_general_attribute_text_sku
+              optionName: attr.class
+              optionValue: page-title-555
+        - '@remove':
+               id: product_view_attribute_group_general_attribute_product_brand_brand

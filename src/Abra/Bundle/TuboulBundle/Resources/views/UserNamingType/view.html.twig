@@ -1,0 +1,66 @@
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%title%": entity.title }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('user_naming_index'),
+        'indexLabel': 'oro.user.user_naming_type.plural_label'|trans,
+        'entityTitle': entity.title
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block navButtons %}
+    {% import '@OroActivity/macros.html.twig' as AC %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% placeholder view_navButtons with {entity: entity} %}
+    {% if is_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path' : path('user_naming_update', { id: entity.id }),
+            'entity_label': 'training.demo.user_naming_type.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block content_data %}
+    {% set generalDataWidget %}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ UI.renderProperty('training.demo.user_naming_type.form.id.label'|trans, entity.id) }}
+                {{ UI.renderProperty('training.demo.user_naming_type.form.title.label'|trans, entity.title) }}
+                {{ UI.renderProperty('training.demo.user_naming_type.form.format.label'|trans, entity.format) }}
+            </div>
+        </div>
+    {% endset %}
+    {% set dataBlocks = [
+        {
+            'title': 'General Information'|trans,
+            'subblocks': [
+                {'data' : [generalDataWidget]},
+            ]
+        }
+    ] %}
+
+    {% if is_granted('show_users_in_naming_types') %}
+        {% set usersAttached %}
+            {{ dataGrid.renderGrid('user-naming-users-attached', {'namingTypeId': entity.id}) }}
+        {% endset %}
+        {% set dataBlocks = dataBlocks|merge([
+            {
+                'title': 'oro.user.entity_plural_label'|trans,
+                'subblocks': [
+                {'data' : [usersAttached]}
+            ]
+            }
+        ]) %}
+    {% endif %}
+
+    {% set id = 'userNamingTypeView' %}
+    {% set data = { 'dataBlocks': dataBlocks } %}
+    {{ parent() }}
+{% endblock content_data %}

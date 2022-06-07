@@ -1,0 +1,67 @@
+{% extends '@OroUI/actions/update.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% oro_title_set({params : {"%entity.subject%": entity.title, "%entityName%": 'training.demo.user_naming_type.entity_label'|trans }}) %}
+{% set entityId = entity.id %}
+
+{% block navButtons %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    {% set html = UI.saveAndCloseButton({
+        'route': 'user_naming_view',
+        'params': {'id': '$id'}
+    }) %}
+    {% if is_granted('user_naming_create') %}
+        {% set html = html ~ UI.saveAndNewButton({
+            'route': 'user_naming_create'
+        }) %}
+    {% endif %}
+    {% if is_granted('user_naming_update') %}
+        {% set html = html ~ UI.saveAndStayButton({
+            'route': 'user_naming_update',
+            'params': {'id': '$id'}
+        }) %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+    {{ UI.cancelButton(path('user_naming_index')) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% if entityId %}
+        {% set breadcrumbs = {
+            'entity': entity,
+            'indexPath': path('user_naming_index'),
+            'indexLabel': 'training.demo.user_naming_type.plural_label'|trans,
+            'entityTitle': entity.title
+        } %}
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'training.demo.user_naming_type.entity_label'|trans}) %}
+        {% include '@OroUI/page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'user-naming-type-form' %}
+
+    {% set dataBlocks = [{
+        'title': 'General Information'|trans,
+        'subblocks': [
+            {
+                'title': '',
+                'data': [
+                    form_row(form.title),
+                    form_row(form.format),
+                ]
+            }
+        ]
+    }] %}
+
+    {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'Additional'|trans)) %}
+
+    {% set data = {
+        'formErrors': form_errors(form) ? form_errors(form) : null,
+        'dataBlocks': dataBlocks,
+    } %}
+    {{ parent() }}
+{% endblock content_data %}
